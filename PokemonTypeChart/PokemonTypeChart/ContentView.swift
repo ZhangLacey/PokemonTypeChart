@@ -159,14 +159,16 @@ struct ContentView: View {
                     }
                 }
                 
+                // if one type hits for super effective & the other not very effective: neutral damage
                 // if both types hit for not very effective: not very effective
+                // if one type hits for not very effective & the other has no effect: not very effective
                 for weak in typeOne.weaknesses {
-                    if typeTwo.weaknesses.contains(weak) {
+                    if typeTwo.weaknesses.contains(weak) || typeTwo.immunes.contains(weak) {
                         weaks.append(weak)
                     }
                 }
                 for weak in typeTwo.weaknesses {
-                    if typeOne.weaknesses.contains(weak) && !weaks.contains(weak) {
+                    if (typeOne.weaknesses.contains(weak) || typeOne.immunes.contains(weak)) && !weaks.contains(weak) {
                         weaks.append(weak)
                     }
                 }
