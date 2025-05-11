@@ -106,14 +106,19 @@ struct ContentView: View {
     }
     
     func selectType(_ name: String) {
-        if primaryType == nil {
-            primaryType = name
-        } else if primaryType == name {
-            primaryType = nil
-        } else if secondaryType == nil {
-            secondaryType = name
+        if primaryType == name {
+            if let second = secondaryType {
+                primaryType = second
+                secondaryType = nil
+            } else {
+                primaryType = nil
+            }
         } else if secondaryType == name {
             secondaryType = nil
+        } else if primaryType == nil {
+            primaryType = name
+        } else if secondaryType == nil {
+            secondaryType = name
         }
     }
     
