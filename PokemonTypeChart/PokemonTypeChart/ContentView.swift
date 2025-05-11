@@ -18,8 +18,8 @@ struct PokemonType: Identifiable, Codable, Hashable {
 
 struct ContentView: View {
     @State private var pokemonTypes = [PokemonType]()
-    @State private var primaryType: String = "None"
-    @State private var secondaryType: String = "None"
+    @State private var primaryType: String? = nil
+    @State private var secondaryType: String? = nil
     @State private var invalidTyping = false
     @State private var invalidTypeError = "Invalid type combination!"
     @State private var weaks: [String] = []
@@ -29,28 +29,37 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Section("Select up to two Pokemon types!") {
+                Spacer()
+                Text("Select up to two Pokemon types!")
+                
+                let columns = [
+                    GridItem(.flexible()),
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ]
+                
+                LazyVGrid(columns: columns, spacing: 10) {
+                    ForEach(pokemonTypes, id: \.self) {
+                        type in
+                        Image(type.name)
+                            .background(
+                                Rectangle()
+                                    .stroke(primaryType == type.name ? Color.orange : Color.clear, lineWidth: 4)
+                                    .stroke(secondaryType == type.name ? Color.orange : Color.clear, lineWidth: 4)
+                            )
+                            .onTapGesture {
+                                selectType(type.name)
+                            }
+                    }
+                }
+                Spacer()
+                Section() {
                     VStack {
-                        HStack {
-                            Picker("Primary type", selection: $primaryType) {
-                                Text("None").tag("None")
-                                ForEach(pokemonTypes, id: \.self) { type in
-                                    Text(type.name).tag(type.name)
-                                }
-                            }
-                            Picker("Secondary type", selection: $secondaryType) {
-                                Text("None").tag("None")
-                                ForEach(pokemonTypes, id: \.self) { type in
-                                    Text(type.name).tag(type.name)
-                                }
-                            }
-                        }
-                        
                         Button {
-                            generate(firstType: primaryType, secondType: secondaryType)
+                            generate(firstType: primaryType!, secondType: secondaryType ?? "None")
                         } label: {
                             generateButton(textColour: .blue, backgroundColour: .white)
-                        }
+                        } .disabled(primaryType == nil)
                         
                         .padding()
                         
@@ -60,7 +69,9 @@ struct ContentView: View {
                             showMatchups(effectText: "No effect:", effectTypes: immunities)
                             
                         }
+                        
                     }
+                    Spacer()
                 }
                 
             }
@@ -92,6 +103,18 @@ struct ContentView: View {
         }
         
         return loadedFile
+    }
+    
+    func selectType(_ name: String) {
+        if primaryType == nil {
+            primaryType = name
+        } else if primaryType == name {
+            primaryType = nil
+        } else if secondaryType == nil {
+            secondaryType = name
+        } else if secondaryType == name {
+            secondaryType = nil
+        }
     }
     
     func generate(firstType: String, secondType: String) {
