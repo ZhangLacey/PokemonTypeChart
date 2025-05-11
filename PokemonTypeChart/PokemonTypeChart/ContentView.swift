@@ -159,14 +159,14 @@ struct ContentView: View {
                     }
                 }
                 
-                // if both types hit for not very effective/neutral: not very effective
+                // if both types hit for not very effective: not very effective
                 for weak in typeOne.weaknesses {
-                    if !typeTwo.strengths.contains(weak) {
+                    if !typeTwo.strengths.contains(weak) && typeTwo.weaknesses.contains(weak) {
                         weaks.append(weak)
                     }
                 }
                 for weak in typeTwo.weaknesses {
-                    if !typeOne.strengths.contains(weak) && !weaks.contains(weak) {
+                    if !typeOne.strengths.contains(weak) && typeOne.weaknesses.contains(weak) && !weaks.contains(weak) {
                         weaks.append(weak)
                     }
                 }
