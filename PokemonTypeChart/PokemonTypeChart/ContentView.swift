@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct PokemonType: Identifiable, Codable, Hashable {
-    var id: Int
+    var id: String { name }
     var name: String
-    var strengths: [String]
-    var weaknesses: [String]
-    var immunes: [String]
-    
+    var superEffective: [String]
+    var notVeryEffective: [String]
+    var hasNoEffect: [String]
+    var immuneTo: [String]
+    var weakTo: [String]
+    var resists: [String]
 }
 
 struct ContentView: View {
@@ -39,13 +41,13 @@ struct ContentView: View {
                 ]
                 
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(pokemonTypes, id: \.self) {
+                    ForEach(pokemonTypes, id: \.id) {
                         type in
                         Image(type.name)
                             .background(
                                 Rectangle()
-                                    .stroke(primaryType == type.name ? Color.orange : Color.clear, lineWidth: 4)
-                                    .stroke(secondaryType == type.name ? Color.orange : Color.clear, lineWidth: 4)
+                                    .stroke(primaryType == type.name ? Color.orange : Color.clear, lineWidth: 6)
+                                    .stroke(secondaryType == type.name ? Color.orange : Color.clear, lineWidth: 6)
                             )
                             .onTapGesture {
                                 selectType(type.name)
@@ -150,10 +152,10 @@ struct ContentView: View {
             
             if let typeOne = typeOne, let typeTwo = typeTwo {
                 // if one of the types hit for super effective: super effective
-                for strength in typeOne.strengths {
+                for strength in typeOne.superEffective {
                     strengths.append(strength)
                 }
-                for strength in typeTwo.strengths {
+                for strength in typeTwo.superEffective {
                     if !strengths.contains(strength) {
                         strengths.append(strength)
                     }
@@ -162,21 +164,21 @@ struct ContentView: View {
                 // if one type hits for super effective & the other not very effective: neutral damage
                 // if both types hit for not very effective: not very effective
                 // if one type hits for not very effective & the other has no effect: not very effective
-                for weak in typeOne.weaknesses {
-                    if typeTwo.weaknesses.contains(weak) || typeTwo.immunes.contains(weak) {
+                for weak in typeOne.notVeryEffective {
+                    if typeTwo.notVeryEffective.contains(weak) || typeTwo.hasNoEffect.contains(weak) {
                         weaks.append(weak)
                     }
                 }
-                for weak in typeTwo.weaknesses {
-                    if (typeOne.weaknesses.contains(weak) || typeOne.immunes.contains(weak)) && !weaks.contains(weak) {
+                for weak in typeTwo.notVeryEffective {
+                    if (typeOne.notVeryEffective.contains(weak) || typeOne.hasNoEffect.contains(weak)) && !weaks.contains(weak) {
                         weaks.append(weak)
                     }
                 }
                 
                 
                 // if both types hit for no effect: no effect
-                for immune in typeOne.immunes {
-                    if typeTwo.immunes.contains(immune) {
+                for immune in typeOne.hasNoEffect {
+                    if typeTwo.hasNoEffect.contains(immune) {
                         immunities.append(immune)
                     }
                 }
@@ -189,15 +191,15 @@ struct ContentView: View {
         if firstType != "None" && secondType == "None" {
             for types in pokemonTypes {
                 if types.name == firstType {
-                    for immune in types.immunes {
+                    for immune in types.hasNoEffect {
                         immunities.append(immune)
                     }
                     
-                    for weak in types.weaknesses {
+                    for weak in types.notVeryEffective {
                         weaks.append(weak)
                     }
                     
-                    for strength in types.strengths {
+                    for strength in types.superEffective {
                         strengths.append(strength)
                     }
                 }
