@@ -60,7 +60,15 @@ struct ContentView: View {
                         Button {
                             generate(firstType: primaryType!, secondType: secondaryType ?? "None")
                         } label: {
-                            generateButton(textColour: .blue, backgroundColour: .white)
+                            generateButton(buttonText: "Offensive Match-ups", textColour: .blue, backgroundColour: .white)
+                        } .disabled(primaryType == nil)
+                        
+                        .padding()
+                        
+                        Button {
+                            generateDefensive(firstType: primaryType!, secondType: secondaryType ?? "None")
+                        } label: {
+                            generateButton(buttonText: "Defensive Match-ups", textColour: .blue, backgroundColour: .white)
                         } .disabled(primaryType == nil)
                         
                         .padding()
@@ -122,6 +130,10 @@ struct ContentView: View {
         } else if secondaryType == nil {
             secondaryType = name
         }
+    }
+    
+    func generateDefensive(firstType: String, secondType: String) {
+        ///
     }
     
     func generate(firstType: String, secondType: String) {

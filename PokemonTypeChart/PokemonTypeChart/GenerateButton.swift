@@ -9,11 +9,12 @@ import SwiftUI
 
 struct generateButton: View {
     
+    var buttonText: String
     var textColour: Color
     var backgroundColour: Color
     
     var body: some View {
-        Text("Generate matchups")
+        Text(buttonText)
             .frame(width: 240, height: 50)
             .background(backgroundColour)
             .foregroundColor(textColour)
