@@ -52,7 +52,7 @@ struct ContentView: View {
                             }
                     }
                 }
-                Spacer()
+                .padding()
                 Section() {
                     VStack {
                         Button {
@@ -135,9 +135,54 @@ struct ContentView: View {
         
         // dual type
         if firstType != "None" && secondType != "None" {
-            // create 3 dictionaries or some structure counting strengths/weaks/immunes. Have default counts at 1 for each. *= 2 every time we encounter a supereffective type, *= 0.5 each time we encounter a not very effective type, *= 0 for immune
-            // for the = 2 they are super effective. For = 4 they are 4x effective (strengths)
-            // = 0.5 is not very effective, = 0.25 is 4x resists, 0 is immune
+            var typeOne: PokemonType?
+            var typeTwo: PokemonType?
+            
+            // get the two types
+            for types in pokemonTypes {
+                if types.name == firstType {
+                    typeOne = types
+                    
+                } else if types.name == secondType {
+                    typeTwo = types
+                }
+            }
+            
+            if let typeOne = typeOne, let typeTwo = typeTwo {
+                // if one of the types hit for super effective: super effective
+                for strength in typeOne.strengths {
+                    strengths.append(strength)
+                }
+                for strength in typeTwo.strengths {
+                    if !strengths.contains(strength) {
+                        strengths.append(strength)
+                    }
+                }
+                
+                // if one type hits for super effective & the other not very effective: neutral damage
+                // if both types hit for not very effective: not very effective
+                // if one type hits for not very effective & the other has no effect: not very effective
+                for weak in typeOne.weaknesses {
+                    if typeTwo.weaknesses.contains(weak) || typeTwo.immunes.contains(weak) {
+                        weaks.append(weak)
+                    }
+                }
+                for weak in typeTwo.weaknesses {
+                    if (typeOne.weaknesses.contains(weak) || typeOne.immunes.contains(weak)) && !weaks.contains(weak) {
+                        weaks.append(weak)
+                    }
+                }
+                
+                
+                // if both types hit for no effect: no effect
+                for immune in typeOne.immunes {
+                    if typeTwo.immunes.contains(immune) {
+                        immunities.append(immune)
+                    }
+                }
+                
+            }
+            
         }
         
         // monotype
