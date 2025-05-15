@@ -24,9 +24,12 @@ struct ContentView: View {
     @State private var secondaryType: String? = nil
     @State private var invalidTyping = false
     @State private var invalidTypeError = "Invalid type combination!"
-    @State private var weaks: [String] = []
-    @State private var strengths: [String] = []
-    @State private var immunities: [String] = []
+    @State private var superEffective: [String] = []
+    @State private var notVeryEffective: [String] = []
+    @State private var noEffect: [String] = []
+    @State private var immuneTo: [String] = []
+    @State private var weakTo: [String] = []
+    @State private var resists: [String] = []
     
     var body: some View {
         NavigationStack {
@@ -74,9 +77,9 @@ struct ContentView: View {
                         .padding()
                         
                         HStack(alignment: .top) {
-                            showMatchups(effectText: "Super effective:", effectTypes: strengths)
-                            showMatchups(effectText: "Not very effective:", effectTypes: weaks)
-                            showMatchups(effectText: "No effect:", effectTypes: immunities)
+                            showMatchups(effectText: "Super effective:", effectTypes: superEffective)
+                            showMatchups(effectText: "Not very effective:", effectTypes: notVeryEffective)
+                            showMatchups(effectText: "No effect:", effectTypes: noEffect)
                             
                         }
                         
@@ -133,13 +136,16 @@ struct ContentView: View {
     }
     
     func generateDefensive(firstType: String, secondType: String) {
-        ///
+        immuneTo = []
+        weakTo = []
+        resists = []
+        
     }
     
     func generate(firstType: String, secondType: String) {
-        immunities = []
-        strengths = []
-        weaks = []
+        noEffect = []
+        superEffective = []
+        notVeryEffective = []
         
         // error
         if (firstType == secondType) || (firstType == "None" && secondType != "None") {
@@ -165,11 +171,11 @@ struct ContentView: View {
             if let typeOne = typeOne, let typeTwo = typeTwo {
                 // if one of the types hit for super effective: super effective
                 for strength in typeOne.superEffective {
-                    strengths.append(strength)
+                    superEffective.append(strength)
                 }
                 for strength in typeTwo.superEffective {
-                    if !strengths.contains(strength) {
-                        strengths.append(strength)
+                    if !superEffective.contains(strength) {
+                        superEffective.append(strength)
                     }
                 }
                 
@@ -178,12 +184,12 @@ struct ContentView: View {
                 // if one type hits for not very effective & the other has no effect: not very effective
                 for weak in typeOne.notVeryEffective {
                     if typeTwo.notVeryEffective.contains(weak) || typeTwo.hasNoEffect.contains(weak) {
-                        weaks.append(weak)
+                        notVeryEffective.append(weak)
                     }
                 }
                 for weak in typeTwo.notVeryEffective {
-                    if (typeOne.notVeryEffective.contains(weak) || typeOne.hasNoEffect.contains(weak)) && !weaks.contains(weak) {
-                        weaks.append(weak)
+                    if (typeOne.notVeryEffective.contains(weak) || typeOne.hasNoEffect.contains(weak)) && !notVeryEffective.contains(weak) {
+                        notVeryEffective.append(weak)
                     }
                 }
                 
@@ -191,7 +197,7 @@ struct ContentView: View {
                 // if both types hit for no effect: no effect
                 for immune in typeOne.hasNoEffect {
                     if typeTwo.hasNoEffect.contains(immune) {
-                        immunities.append(immune)
+                        noEffect.append(immune)
                     }
                 }
                 
@@ -204,15 +210,15 @@ struct ContentView: View {
             for types in pokemonTypes {
                 if types.name == firstType {
                     for immune in types.hasNoEffect {
-                        immunities.append(immune)
+                        noEffect.append(immune)
                     }
                     
                     for weak in types.notVeryEffective {
-                        weaks.append(weak)
+                        notVeryEffective.append(weak)
                     }
                     
                     for strength in types.superEffective {
-                        strengths.append(strength)
+                        superEffective.append(strength)
                     }
                 }
             }
