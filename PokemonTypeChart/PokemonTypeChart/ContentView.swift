@@ -83,6 +83,13 @@ struct ContentView: View {
                             
                         }
                         
+                        HStack(alignment: .top) {
+                            showMatchups(effectText: "Immune to:", effectTypes: immuneTo)
+                            showMatchups(effectText: "Weak to:", effectTypes: weakTo)
+                            showMatchups(effectText: "Resists:", effectTypes: resists)
+                            
+                        }
+                        
                     }
                     Spacer()
                 }
@@ -139,6 +146,31 @@ struct ContentView: View {
         immuneTo = []
         weakTo = []
         resists = []
+        
+        // error
+        if (firstType == secondType) || (firstType == "None" && secondType != "None") {
+            invalidTyping = true
+            return
+        }
+        
+        if firstType != "None" && secondType == "None" {
+            for types in pokemonTypes {
+                if types.name == firstType {
+                    for immune in types.immuneTo {
+                        immuneTo.append(immune)
+                    }
+                    
+                    for weak in types.weakTo {
+                        weakTo.append(weak)
+                    }
+                    
+                    for strength in types.resists {
+                        resists.append(strength)
+                    }
+                }
+            }
+        }
+        
         
     }
     
